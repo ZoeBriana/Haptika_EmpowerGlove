@@ -1,0 +1,2 @@
+# Haptika_EmpowerGlove
+The concept for the Empower Glove is simple and profound. The concept is “I complete an action, I create change.” — “I clench my fist and the light comes on.” This first prototype uses the haptic interaction of pressure. By clenching one’s fist, in an intentional gesture, and enacting the reciprocal feedback, the project teaches both embodiment through intentional somatic awareness and empowerment through creation, gesture, and reciprocity. http://www.haptika.co/portfolios/the-empower-glove/
