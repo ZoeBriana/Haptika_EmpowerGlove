@@ -1,0 +1,97 @@
+///Haptika ***THE EMPOWER GLOVE!!!***
+// v.03 with through hole NeoPixel LEDs
+/*
+The Haptika Empower Glove is an electronic DIY project which
+aims to represent a thereaputic DIY wearable platform to enable a sense of
+embodiment and empowerment in special regards to those who are survivors
+of trauma and abuse. Through the access, creation, remix, and use of the
+Haptika platform, survivors have the potential to RE-member personal trauma
+through play, embodiment, and empowerment.
+This project in particular aims to mitigate the effects of abuse through intentional gesture and
+somatic awareness of the haptic interaction of pressure. The intentional gesture is simple yet
+profound. The concept is “I complete an action, I create change.” —
+“I clench my fist and the light comes on.”
+By clenching one’s fist, in an intentional gesture, and enacting the reciprocal feedback,
+the project teaches both embodiment through intentional somatic awareness and empowerment
+through creation, gesture, and reciprocity.
+Parts list:
+ELECTRONICS:
+1x Breadboard
+1x Sparkfun Pro Micro (https://www.sparkfun.com/products/12640)
+1x Force Sense Resistor
+1x Addressable Neopixel
+1x 10k Resistor
+Wires
+DIY PARTS:
+1x Glove
+1x velcro or attaching material
+Included in this code is Adafruit’s Neopixel library:
+https://learn.adafruit.com/adafruit-neopixel-uberguide/arduino-library
+*/
+//Include these libraries and parameters
+#include <Adafruit_NeoPixel.h>
+#ifdef __AVR__
+#include <avr/power.h>
+#endif
+#define PIN 3 //PWM pin 3 for output to Neopixel
+// Parameter 1 = number of pixels in strip
+// Parameter 2 = Arduino pin number (most are valid)
+// Parameter 3 = pixel type flags, add together as needed:
+// NEO_KHZ800 800 KHz bitstream (most NeoPixel products w/WS2812 LEDs)
+// NEO_KHZ400 400 KHz (classic ‘v1’ (not v2) FLORA pixels, WS2811 drivers)
+// NEO_GRB Pixels are wired for GRB bitstream (most NeoPixel products)
+// NEO_RGB Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
+// IMPORTANT: To reduce NeoPixel burnout risk, add 1000 uF capacitor across
+// pixel power leads, add 300 – 500 Ohm resistor on first pixel’s data input
+// and minimize distance between Arduino and first pixel. Avoid connecting
+// on a live circuit…if you must, connect GND first.
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, PIN, NEO_RGB + NEO_KHZ800);
+int forceValue; //calling out this variable to use below for the Force Sense Resistor (FSR)
+void setup() {
+// put your setup code here, to run once:
+Serial.begin(9600); //Starting the serial so that we can read data that comes in
+pinMode(3, OUTPUT);//LED on pin 3
+strip.begin();
+strip.show(); // Initialize all pixels to ‘off’
+}
+void loop() {
+// put your main code here, to run repeatedly:
+//Open up the serial port to read what the FSR reads as fist clenched and unclenched
+//Note these values to use in the if statement below
+forceValue = analogRead(A0);
+Serial.println(forceValue);
+//if statement allows for a cause and effect situation
+//here place the value for fist clenched
+//note that in this example, my reading is less than 415 when my fist is clenched)
+if(forceValue <= 415){
+rainbow(20);
+}
+else{ //else says that if the value is not less than 415 do this…
+strip.setPixelColor(0, 0, 0, 0); //sets the Neopixel to “off” (pixel #, r, g, b)
+strip.show(); // Initialize all pixels to ‘off’
+}
+}
+//NeoPixel functions to call above!
+void rainbow(uint8_t wait) {
+uint16_t i, j;
+for(j=0; j<256; j++) {
+for(i=0; i<strip.numPixels(); i++) {
+strip.setPixelColor(i, Wheel((i+j) & 255));
+}
+strip.show();
+delay(wait);
+}
+}
+// Input a value 0 to 255 to get a color value.
+// The colours are a transition r – g – b – back to r.
+uint32_t Wheel(byte WheelPos) {
+if(WheelPos < 85) {
+return strip.Color(WheelPos * 3, 255 – WheelPos * 3, 0);
+} else if(WheelPos < 170) {
+WheelPos -= 85;
+return strip.Color(255 – WheelPos * 3, 0, WheelPos * 3);
+} else {
+WheelPos -= 170;
+return strip.Color(0, WheelPos * 3, 255 – WheelPos * 3);
+}
+}
